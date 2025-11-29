@@ -1,0 +1,67 @@
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  FREELANCE
+  TEMPORARY
+  REMOTE
+}
+
+enum Experience {
+  JUNIOR
+  MID
+  SENIOR
+  LEAD
+}
+
+model Job {
+  id         Int                          @id @default(autoincrement())
+  type       JobType
+  userId     Int
+  user       User                         @relation(fields: [userId], references: [id])
+  categoryId Int?
+  category   Category?                    @relation(fields: [categoryId], references: [id], name: "JobCategories")
+
+  // ✅ Now both relations
+  countryId Int
+  country   Country @relation(fields: [countryId], references: [id])
+
+  cityId Int
+  city   City @relation(fields: [cityId], references: [id])
+
+  salaryMin  Int?
+  salaryMax  Int?
+  skills     String[]
+  experience Experience?
+  postedAt   DateTime    @default(now())
+  expiresAt  DateTime?
+  isActive   Boolean     @default(true)
+  isFeatured Boolean     @default(false)
+  isRemote   Boolean     @default(false)
+
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @default(now()) @updatedAt
+  reviews      Review[]
+  translations JobTranslation[]
+
+  @@index([type, isActive])
+}
+
+model JobTranslation {
+  id    Int @id @default(autoincrement())
+  jobId Int
+  job   Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  lang         String
+  title        String
+  description  String
+  company      String?
+  location     String?
+  benefits     String?
+  requirements String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([jobId, lang])
+}

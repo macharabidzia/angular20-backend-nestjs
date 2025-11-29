@@ -1,0 +1,23 @@
+// =======================================
+// Prisma Schema for Job Platform Database
+// =======================================
+// This schema defines the data models for a job listing platform.
+// It includes `User` and `Job` entities, an enum for job types,
+// and relationships between users and the jobs they post.
+
+// -------------------------------
+// Prisma Client Configuration
+// -------------------------------
+generator client {
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "windows", "linux-musl-openssl-3.0.x"]
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+// -------------------------------
+// Database Configuration
+// -------------------------------
+datasource db {
+  provider   = "postgresql" // Use PostgreSQL as the database provider
+  url        = env("DATABASE_URL") // Connection URL stored in .env file
+}

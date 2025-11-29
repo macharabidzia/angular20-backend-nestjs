@@ -1,0 +1,17 @@
+model City {
+  id           Int               @id @default(autoincrement())
+  countryId    Int
+  country      Country           @relation(fields: [countryId], references: [id])
+  translations CityTranslation[]
+  Job          Job[]
+}
+
+model CityTranslation {
+  id     Int    @id @default(autoincrement())
+  city   City   @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId Int
+  lang   String
+  name   String
+
+  @@unique([cityId, lang])
+}

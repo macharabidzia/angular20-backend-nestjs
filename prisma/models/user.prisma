@@ -1,0 +1,71 @@
+enum RoleName {
+  USER
+  ADMIN
+  MODERATOR
+  HR
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        RoleName     @unique
+  permissions Permission[]
+  users       User[]
+}
+
+model Permission {
+  id    Int    @id @default(autoincrement())
+  code  String @unique
+  roles Role[]
+  users User[]
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  username  String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  phone               String    @unique
+  isVerified          Boolean   @default(false)
+  verificationToken   String?
+  verificationExpires DateTime?
+
+  // RBAC relations
+  roleId      Int?
+  role        Role?        @relation(fields: [roleId], references: [id])
+  permissions Permission[]
+
+  // your existing relations
+  reviews      Review[]
+  jobs         Job[]
+  translations UserTranslation[]
+  images       Image[]              @relation("UserImages")
+  resetTokens  PasswordResetToken[]
+
+  @@index([verificationToken])
+}
+
+model UserTranslation {
+  id     Int     @id @default(autoincrement())
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  lang   String
+  name   String
+  bio    String?
+
+  @@unique([userId, lang])
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}

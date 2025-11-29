@@ -1,0 +1,27 @@
+enum ImageType {
+  AVATAR
+  COVER
+  LOGO
+}
+
+enum EntityType {
+  USER
+  JOB
+}
+
+model Image {
+  id         Int        @id @default(autoincrement())
+  url        String
+  alt        String?
+  type       ImageType
+  entityType EntityType
+  entityId   Int
+  lang       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User? @relation("UserImages", fields: [entityId], references: [id], onDelete: Cascade)
+
+  @@index([entityType, entityId])
+}
